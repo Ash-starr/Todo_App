@@ -6,6 +6,7 @@ const { Todo } = require("./models");
 const { Model } = require("sequelize");
 
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.set("view engine", "ejs");
 
@@ -15,10 +16,11 @@ app.get("/", async (request, response) => {
   const overdue = await Todo.overdue();
   const dueToday = await Todo.dueToday();
   const dueLater = await Todo.dueLater();
+  const completedItems = await Todo.completedItems();
   if (request.accepts("html")) {
-    response.render("index", { overdue, dueToday, dueLater });
+    response.render("index", { overdue, dueToday, dueLater, completedItems });
   } else {
-    response.json({ overdue, dueToday, dueLater });
+    response.json({ overdue, dueToday, dueLater, completedItems });
   }
 });
 
@@ -32,27 +34,28 @@ app.get("/todos", async (request, response) => {
   }
 });
 
+// adding todo
 app.post("/todos", async (request, response) => {
   console.log("Creating a todo", request.body);
-  // todo
   try {
-    const todo = await Todo.addTodo({
+    await Todo.addTodo({
       title: request.body.title,
       dueDate: request.body.dueDate,
       completed: false,
     });
-    return response.json(todo);
+    return response.redirect("/");
   } catch (error) {
     console.error(error);
     return response.status(422).json(error);
   }
 });
 
-app.put("/todos/:id/markAsCompleted", async (request, response) => {
+app.put("/todos/:id", async (request, response) => {
   console.log("We have to update a todi with ID:", request.params.id);
   const todo = await Todo.findByPk(request.params.id);
+  const status = request.body.completed;
   try {
-    const updatedTodo = await todo.markAsCompleted();
+    const updatedTodo = await todo.setCompletionStatus(status);
     return response.json(updatedTodo);
   } catch (error) {
     console.log(error);
@@ -61,14 +64,9 @@ app.put("/todos/:id/markAsCompleted", async (request, response) => {
 });
 
 app.delete("/todos/:id", async (request, response) => {
-  const todoID = request.params.id;
   try {
-    const deleted = await Todo.destroy({ where: { id: todoID } });
-    if (deleted) {
-      return response.json(true);
-    } else {
-      return response.json(false);
-    }
+    await Todo.remove(request.params.id);
+    return response.json({ success: true });
   } catch (error) {
     console.error(error);
     return response.status(500).json({ error: "Failed to delete todo" });

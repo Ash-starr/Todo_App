@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             dueDate: {
               [Op.lt]: new Date(),
             },
+            completed: false,
           },
         });
       } catch (error) {
@@ -40,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
             dueDate: {
               [Op.eq]: new Date(),
             },
+            completed: false,
           },
         });
       } catch (error) {
@@ -54,6 +56,35 @@ module.exports = (sequelize, DataTypes) => {
             dueDate: {
               [Op.gt]: new Date(),
             },
+            completed: false,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    static async completedItems() {
+      try {
+        return this.findAll({
+          where: {
+            completed: true,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    setCompletionStatus(status) {
+      return this.update({ completed: status });
+    }
+
+    static async remove(id) {
+      try {
+        return this.destroy({
+          where: {
+            id,
           },
         });
       } catch (error) {
