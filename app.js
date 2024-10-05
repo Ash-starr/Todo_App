@@ -1,5 +1,5 @@
 const express = require("express");
-const csrf = require("csurf");
+const csrf = require("tiny-csrf");
 const cookieParser = require("cookie-parser");
 const app = express();
 const bodyParser = require("body-parser");
@@ -10,7 +10,7 @@ const { Model } = require("sequelize");
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser("shh! some secret string"));
-app.use(csrf({ cookie: true }));
+app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 
 app.set("view engine", "ejs");
 
