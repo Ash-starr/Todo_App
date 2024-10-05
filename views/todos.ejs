@@ -1,70 +1,26 @@
-<div>
-
-   <div class="flex justify-start items-center gap-2">
-      <h5>Overdue</h5>
-      <span id="count-overdue" class="bg-gray-300 py-1 px-2 rounded-xl">
-         <%= allTodos.filter(todo=> new Date(todo.dueDate) < new Date() && !todo.completed).length %>
+<h5>
+   <%= title %> <span
+         class="bg-gray-100 text-gray-900 text-sm font-small mr-2 px-2.5 py-0.5 rounded dark:bg-gray-200 dark:text-gray-900 justify-center items-center items">
+         <%= data.length %>
       </span>
-   </div>
-   <ul class="list-none p-2">
-      <% allTodos.forEach(todo=> { %>
-         <% if (new Date(todo.dueDate) < new Date() && !todo.completed) { %>
-            <li class="Todo-item">
-               <div class="flex w-fit my-2 px-2 py-1 items-center rounded hover:bg-purple-50">
-                  <input id="todo-checkbox-<%= todo.id %>" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-600" />
-                  <label for="todo-checkbox-<%= todo.id %>" class="ml-2 text-sm text-gray-600 cursor-pointer">
-                     <%= todo.title %>
-                  </label>
-               </div>
-            </li>
-            <% } %>
-               <% }) %>
-   </ul>
-
-
-   <div class="flex justify-start items-center gap-2">
-      <h5>Due Today</h5>
-      <span id="count-due-today" class="bg-gray-300 py-1 px-2 rounded-xl">
-         <%= allTodos.filter(todo=> new Date(todo.dueDate).toDateString() === new Date().toDateString() &&
-            !todo.completed).length %>
-      </span>
-   </div>
-   <ul class="list-none p-2">
-      <% allTodos.forEach(todo=> { %>
-         <% if (new Date(todo.dueDate).toDateString()===new Date().toDateString() && !todo.completed) { %>
-            <li class="Todo-item">
-               <div class="flex w-fit my-2 px-2 py-1 items-center rounded hover:bg-purple-50">
-                  <input id="todo-checkbox-<%= todo.id %>" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-600" />
-                  <label for="todo-checkbox-<%= todo.id %>" class="ml-2 text-sm text-gray-600 cursor-pointer">
-                     <%= todo.title %>
-                  </label>
-               </div>
-            </li>
-            <% } %>
-               <% }) %>
-   </ul>
-
-
-   <div class="flex justify-start items-center gap-2">
-      <h5>Due Later</h5>
-      <span id="count-due-later" class="bg-gray-300 py-1 px-2 rounded-xl">
-         <%= allTodos.filter(todo=> new Date(todo.dueDate) > new Date() && !todo.completed).length %>
-      </span>
-   </div>
-   <ul class="list-none p-2">
-      <% allTodos.forEach(todo=> { %>
-         <% if (new Date(todo.dueDate)> new Date() && !todo.completed) { %>
-            <li class="Todo-item">
-               <div class="flex w-fit my-2 px-2 py-1 items-center rounded hover:bg-purple-50">
-                  <input id="todo-checkbox-<%= todo.id %>" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-600" />
-                  <label for="todo-checkbox-<%= todo.id %>" class="ml-2 text-sm text-gray-600 cursor-pointer">
-                     <%= todo.title %>
-                  </label>
-               </div>
-            </li>
-            <% } %>
-               <% }) %>
-   </ul>
-
-
-</div>
+</h5>
+<ul class="list-none">
+   <% for(let i=0;i<data.length;i++) { %>
+      <li class="Todo-Item">
+         <div class="flex items-center w-fit my-2 px-2 py-1 rounded hover:bg-purple-50">
+            <input type="checkbox" id="check-item-1" class="w-4 h-4 text-blue-600 bg-gray-100">
+            <label for="check-item-1" class="ml-2 text-sm text-gray-600 cursor-pointer">
+               <%= data[i].title%>
+            </label>
+            <a href="#" class="hidden  trash-icon ml-2">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-trash">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+               </svg>
+            </a>
+         </div>
+      </li>
+      <% } %>
+</ul>

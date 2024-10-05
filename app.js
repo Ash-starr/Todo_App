@@ -2,24 +2,25 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const path = require("path");
-
-app.use(bodyParser.json());
-
 const { Todo } = require("./models");
 const { Model } = require("sequelize");
 
+app.use(bodyParser.json());
+
 app.set("view engine", "ejs");
 
+app.use(express.static(path.join(__dirname, "public")));
+
 app.get("/", async (request, response) => {
-  const allTodos = await Todo.getTodos();
+  const overdue = await Todo.overdue();
+  const dueToday = await Todo.dueToday();
+  const dueLater = await Todo.dueLater();
   if (request.accepts("html")) {
-    response.render("index", { allTodos });
+    response.render("index", { overdue, dueToday, dueLater });
   } else {
-    response.json({ allTodos });
+    response.json({ overdue, dueToday, dueLater });
   }
 });
-
-app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/todos", async (request, response) => {
   try {
