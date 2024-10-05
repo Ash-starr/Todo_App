@@ -1,4 +1,6 @@
 const express = require("express");
+const csrf = require("csurf");
+const cookieParser = require("cookie-parser");
 const app = express();
 const bodyParser = require("body-parser");
 const path = require("path");
@@ -7,6 +9,8 @@ const { Model } = require("sequelize");
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser("shh! some secret string"));
+app.use(csrf({ cookie: true }));
 
 app.set("view engine", "ejs");
 
@@ -18,7 +22,13 @@ app.get("/", async (request, response) => {
   const dueLater = await Todo.dueLater();
   const completedItems = await Todo.completedItems();
   if (request.accepts("html")) {
-    response.render("index", { overdue, dueToday, dueLater, completedItems });
+    response.render("index", {
+      overdue,
+      dueToday,
+      dueLater,
+      completedItems,
+      csrfToken: request.csrfToken(),
+    });
   } else {
     response.json({ overdue, dueToday, dueLater, completedItems });
   }

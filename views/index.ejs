@@ -4,18 +4,21 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="csrf-token" content="<%= csrfToken %>">
    <title>TODO App</title>
    <script src="https://cdn.tailwindcss.com"></script>
    <link rel="stylesheet" href="./css/styles.css">
 
    <script>
+      var token = document.querySelector(`meta[name="csrf-token"]`).getAttribute("content");
       const checkedOrNot = id => document.getElementById(`todo-checkbox-${id}`).checked;
       function updateTodo(id) {
          fetch(`/todos/${id}`, {
             method: 'put',
             headers: { 'Content-type': 'application/json' },
             body: JSON.stringify({
-               completed: checkedOrNot(id)
+               completed: checkedOrNot(id),
+               "_csrf": token,
             })
          }).then((res) => {
             if (res.ok) {
@@ -26,7 +29,10 @@
       function deleteTodo(id) {
          fetch(`/todos/${id}`, {
             method: 'delete',
-            headers: { 'Content-type': 'application/json' }
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify({
+               "_csrf": token,
+            })
          }).then((res) => {
             if (res.ok) {
                window.location.reload();
@@ -42,6 +48,7 @@
          <%- include('header.ejs') %>
 
             <form id="todo-form" action="/todos" method="POST">
+               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                <div class="flex gap-2 p-4">
                   <div class="flex-auto">
                      <input type="text" name="title" placeholder="What's next?"
